@@ -124,6 +124,8 @@ void competition_initialize() {}
 void autonomous()
 {
 	pros::Rotation RotationSensor(12);
+	imu_sensor.reset();
+	imu_sensor::tare(17);
 
 	std::shared_ptr<ChassisController> bot = ChassisControllerBuilder()
 	 .withMotors(18, -20, -9, 14) // front right and back right were reversed in order to go forward
@@ -149,8 +151,6 @@ void autonomous()
 	// bot->moveDistance(9.5_in);
 
 	// Code from here is really important for the autonomous
-
-	
 
 	bot->moveDistance(22_in);
 	bot->turnAngle(50_deg);
