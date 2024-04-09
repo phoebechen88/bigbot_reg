@@ -123,9 +123,9 @@ void competition_initialize() {}
 
 void autonomous()
 {
-	pros::Rotation RotationSensor(12);
+	pros::Rotation RotationSensor(12); // Initialize rotation sensor
 
-	std::shared_ptr<ChassisController> bot = ChassisControllerBuilder()
+	std::shared_ptr<ChassisController> bot = ChassisControllerBuilder() // PID
 	 .withMotors(18, -20, -9, 14) // front right and back right were reversed in order to go forward
 	 // change P then D first then I only if necessary
 	 // start with P I and D with zero
@@ -142,7 +142,7 @@ void autonomous()
 	pros::lcd::set_text(1, "THIS IS AUTON!");
 
 
-	imu_sensor.reset(); // calibrate
+	imu_sensor.reset(); // calibrate imu
 	if (imu_sensor.is_calibrating()) // check callibration
 	{
 		pros::lcd::set_text(2, "calibrated" + std::to_string(imu_sensor.is_calibrating()));
@@ -154,37 +154,37 @@ void autonomous()
 	}
 	imu_sensor.set_data_rate(5);
 	imu_sensor.tare(); // tare
-	imu_sensor.tare_yaw(); // tare yaw
-	pros::lcd::set_text(3, "IMU initial: " + std::to_string(imu_sensor.get_yaw()));
 	pros::delay(500); // pause
+	pros::lcd::set_text(3, "IMU initial: " + std::to_string(imu_sensor.get_rotation()));
 
 	bot->moveDistance(10_in);
-	bot->turnAngle(-20_deg);
-	pros::lcd::set_text(4, "IMU post turn:" + std::to_string(imu_sensor.get_yaw()));
+
+	bot->turnAngle(20_deg);
+	pros::lcd::set_text(4, "IMU post turn:" + std::to_string(imu_sensor.get_rotation()));
 	pros::delay(500); // pause
 
-	while(round(imu_sensor.get_yaw()) != -20)
+	while(round(imu_sensor.get_rotation()) != 20)
 	{
-		if(round(imu_sensor.get_yaw()) < -20)
+		if(round(imu_sensor.get_rotation()) < 20)
 		{		
-			int value = -20 - imu_sensor.get_yaw();
+			int value = 20 - imu_sensor.get_rotation();
 			bot->turnAngle(value*1_deg);
 			// if(imu_sensor.get_rotation() < 48 || imu_sensor.get_rotation() > 52){
 			// 	break;
 			// }
 			pros::lcd::set_text(5, "difference value:" + std::to_string(value));
-			pros::lcd::set_text(6, "IMU fix:" + std::to_string(imu_sensor.get_yaw()));
+			pros::lcd::set_text(6, "IMU fix:" + std::to_string(imu_sensor.get_rotation()));
 			pros::delay(500); // pause
 		}
-		else if (round(imu_sensor.get_yaw()) > -20)
+		else if (round(imu_sensor.get_rotation()) > 20)
 		{		
-			int value = imu_sensor.get_yaw() - -20;
+			int value = imu_sensor.get_rotation() - 20;
 			bot->turnAngle(-value*1_deg);
 			// if(imu_sensor.get_rotation() < 48 || imu_sensor.get_rotation() > 52){
 			// 	break;
 			// }
 			pros::lcd::set_text(5, "difference value:" + std::to_string(value));
-			pros::lcd::set_text(6, "IMU fix:" + std::to_string(imu_sensor.get_yaw()));
+			pros::lcd::set_text(6, "IMU fix:" + std::to_string(imu_sensor.get_rotation()));
 			pros::delay(500); // pause
 		}
 	}
