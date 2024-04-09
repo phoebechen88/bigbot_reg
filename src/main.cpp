@@ -161,16 +161,17 @@ void autonomous()
 
 	}
 	imu_sensor.tare();
-	
 	pros::lcd::set_text(3, "IMU initial: " + std::to_string(imu_sensor.get_yaw()));
-
 	pros::delay(500); // pause
+
+	// while(round(imu_sensor.get_yaw()) != 20)
+	// {
+	// 	bot->turnAngle(5_deg);
+	// }
 
 	bot->moveDistance(10_in);
 	bot->turnAngle(20_deg);
-
 	pros::lcd::set_text(4, "IMU post turn:" + std::to_string(imu_sensor.get_yaw()));
-
 	pros::delay(500); // pause
 
 	while(round(imu_sensor.get_yaw()) != 20)
@@ -197,17 +198,7 @@ void autonomous()
 		}
 	}
 
-	// while(imu_sensor.get_rotation() >= -50.0)
-	// {
-	// 	int value = 50 - abs(imu_sensor.get_rotation());
-	// 	bot->turnAngle(-value*1_deg)
-	// 	std::string text = "IMU rotation: " + std::to_string(imu_sensor.get_rotation());
-	// 	pros::lcd::set_text(0, text.c_str());
-	// 	if(imu_sensor.get_rotation() <= -45 && imu_sensor.get_rotation() >= -55)
-	// 	{
-	// 		break;
-	// 	}
-	// }
+
 
 	bot->moveDistance(20_in);
 	while (true) // Run Until the end of the autonomous period
