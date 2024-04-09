@@ -205,7 +205,7 @@ void autonomous()
 	}
 	
 	pros::delay(500);
-	
+
 	bot->moveDistance(1_in);
 	Arm.move_absolute(700, 300); // The Arm for intake goes down
 	bot->moveDistance(1_in);
