@@ -132,7 +132,7 @@ void autonomous()
 	 .withGains( // 0.7, 0, 0.1 results: faster, shaking less violently 0
 		 // 0.5 =
 		 {0.0007, 0, 0},	  // Distance controller gains
-		 {0.0005, 0, 0},	  // turn controller gains
+		 {0.0007, 0, 0},	  // turn controller gains
 		 {0.0, 0, 0.0000} // Angle controller (helps bot drive straight)
 		 )
 	 .withMaxVelocity(200)
@@ -159,31 +159,31 @@ void autonomous()
 	pros::delay(500); // pause
 
 	bot->moveDistance(10_in);
-	bot->turnAngle(50_deg);
+	bot->turnAngle(-20_deg);
 	pros::lcd::set_text(4, "IMU post turn:" + std::to_string(imu_sensor.get_yaw()));
 	pros::delay(500); // pause
 
-	while(round(imu_sensor.get_yaw()) != 50)
+	while(round(imu_sensor.get_yaw()) != -20)
 	{
-		if(round(imu_sensor.get_yaw()) < 50)
+		if(round(imu_sensor.get_yaw()) < -20)
 		{		
-			int value = 50 - imu_sensor.get_yaw();
+			int value = -20 - imu_sensor.get_yaw();
 			bot->turnAngle(value*1_deg);
 			// if(imu_sensor.get_rotation() < 48 || imu_sensor.get_rotation() > 52){
 			// 	break;
 			// }
-			pros::lcd::set_text(5, "value:" + std::to_string(value));
+			pros::lcd::set_text(5, "difference value:" + std::to_string(value));
 			pros::lcd::set_text(6, "IMU fix:" + std::to_string(imu_sensor.get_yaw()));
 			pros::delay(500); // pause
 		}
-		else if (round(imu_sensor.get_yaw()) > 50)
+		else if (round(imu_sensor.get_yaw()) > -20)
 		{		
-			int value = imu_sensor.get_yaw() - 50;
+			int value = imu_sensor.get_yaw() - -20;
 			bot->turnAngle(-value*1_deg);
 			// if(imu_sensor.get_rotation() < 48 || imu_sensor.get_rotation() > 52){
 			// 	break;
 			// }
-			pros::lcd::set_text(5, "value:" + std::to_string(value));
+			pros::lcd::set_text(5, "difference value:" + std::to_string(value));
 			pros::lcd::set_text(6, "IMU fix:" + std::to_string(imu_sensor.get_yaw()));
 			pros::delay(500); // pause
 		}
