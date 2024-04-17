@@ -105,7 +105,7 @@ void competition_initialize() {}
 	 
 	 .withGains( // 0.7, 0, 0.1 results: faster, shaking less violently 0
 		 // 0.5 =
-		 {0.0002, 0.001, 0},	  // Distance controller gains
+		 {0.0006, 0.0000017, 0},	  // Distance controller gains
 		 {0.001, 0, 0},	  // turn controller gains
 		 {0.001, 0, 0.0000} // Angle controller (helps bot drive straight)
 		 )
@@ -302,13 +302,15 @@ void autonomous()
 	pros::lcd::set_text(1, "THIS IS AUTON!");
 
 	// ! Call the redAuton function when needed
-	// redAuton();
+	redAuton();
 
 	// ! Call the blueAuton function when needed
 	// TODO: Code the blueAuton function
-	// blueAuton();
+	//blueAuton();
+	
+ 
+	// bot->moveDistance(2_ft);
 
-	bot->moveDistance(2_ft);
 }
 
 /**
