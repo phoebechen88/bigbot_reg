@@ -339,8 +339,6 @@ void opcontrol()
 	
 	// imu_sensor.reset();
 
-	bool pistonOpen = true;
-
 	pros::lcd::set_text(1, "READY TO DRIVE");
 	int xMotion;
 	int yMotion;
@@ -348,6 +346,8 @@ void opcontrol()
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	Catapult.tare_position();
 	Arm.tare_position();
+
+	bool pistonOpen = true;
 
 	//-33 Arm encoder units for intake
 
@@ -364,11 +364,12 @@ void opcontrol()
 		BackLeft.move(left);
 		BackRight.move(-right);
 		FrontRight.move(-right);
-		MidLeft.move(left);
-		MidRight.move(-right);
+		MidLeft.move(yMotion);
+		MidRight.move(yMotion);
 
 
-		if (master.get_digital(DIGITAL_R1)) // Catapult Set and Launch
+		pros::lcd::set_text(3, "Catapult Velocity:" + std::to_string(Catapult.get_actual_velocity()));
+		if (master.get_digital(DIGITAL_L1)) // Catapult Set and Launch
 		{
 			RotationSensor.set_data_rate(0);
 			Catapult.move_velocity(200);
@@ -385,15 +386,13 @@ void opcontrol()
 		}
 
 
-		if (master.get_digital(DIGITAL_L1)) // Intake Arm
+		if (master.get_digital(DIGITAL_R1)) // Intake Arm
 		{
 			Arm.move_velocity(-112);
-			pros::lcd::set_text(5, "Arm Velocity:" + std::to_string(Arm.get_actual_velocity()));
 		}
-		else if (master.get_digital(DIGITAL_L2))
+		else if (master.get_digital(DIGITAL_R2))
 		{
 			Arm.move_velocity(112);
-			pros::lcd::set_text(5, "Arm Velocity:" + std::to_string(Arm.get_actual_velocity()));
 		}
 		else
 		{
@@ -401,21 +400,21 @@ void opcontrol()
 		}
 
 
-		if (master.get_digital(DIGITAL_UP)) // Intake Rotation
+		if (master.get_digital(DIGITAL_X)) // Intake Rotation
 		{
 			Intake.move_velocity(-200);
 		}
-		else if (master.get_digital(DIGITAL_DOWN))
+		else if (master.get_digital(DIGITAL_B))
 		{
 			Intake.move_velocity(200);
 		}
-		else if (master.get_digital(DIGITAL_LEFT))
+		else if (master.get_digital(DIGITAL_A))
 		{
 			Intake.move_velocity(0);
 		}
 
 
-		if (master.get_digital(DIGITAL_A)) // Wing Piston
+		if (master.get_digital(DIGITAL_LEFT)) // Wing Piston
 		{
 			pistonOpen = !pistonOpen;
 			Piston.set_value(pistonOpen);
