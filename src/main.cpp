@@ -116,7 +116,7 @@ void competition_initialize() {}
 // This set the Catapult's Position
 void setCatapult(){
 	// Set the Rotation Sensor
-	pros::Rotation RotationSensor(12);
+	pros::Rotation RotationSensor(19);
 
 	// * Run until the Catault is at the desired position which is Down
 	while (true)
@@ -296,7 +296,7 @@ void slapBall(){
 
 void autonomous()
 {
-	pros::Rotation RotationSensor(12);
+	pros::Rotation RotationSensor(19);
 
 	pros::lcd::set_text(1, "THIS IS AUTON!");
 
@@ -328,7 +328,7 @@ void opcontrol()
 	pros::Motor FrontRight(16, true);
 	pros::Motor BackLeft(11, false);
 	pros::Motor BackRight(14, true);
-	pros::Motor MidRight(15, false);
+	pros::Motor MidRight(15, true);
 	pros::Motor MidLeft(12, false);
 	pros::Motor Catapult(17, false);
 	pros::Motor Arm(20, false);
@@ -336,14 +336,14 @@ void opcontrol()
 	pros::Rotation RotationSensor(19);
 	pros::ADIDigitalOut Piston('A');
 	pros::Imu imu_sensor(10);
+	
 	// imu_sensor.reset();
 
-
+	bool pistonOpen = true;
 
 	pros::lcd::set_text(1, "READY TO DRIVE");
 	int xMotion;
 	int yMotion;
-	int value;
 
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	Catapult.tare_position();
@@ -351,31 +351,8 @@ void opcontrol()
 
 	//-33 Arm encoder units for intake
 
-
-	imu_sensor.tare_yaw();
-	imu_sensor.tare_roll();
-	imu_sensor.tare_pitch();
-
 	while (true)
 	{
-
-	pros::lcd::set_text(1, "YAW: " + std::to_string(imu_sensor.get_yaw()));
-	pros::lcd::set_text(2, "PITCH: " + std::to_string(imu_sensor.get_roll()));
-	pros::lcd::set_text(3, "ROLL: " + std::to_string(imu_sensor.get_pitch()));
-
-	// pros::lcd::set_text(2, "IMU quaternion y: " + std::to_string(qt.y));
-	// pros::lcd::set_text(3, "IMU quaternion z: " + std::to_string(qt.z));
-	// pros::lcd::set_text(4, "IMU quaternion w: " + std::to_string(qt.w));
-
-		// pros::lcd::set_text(1, "Arm:" + std::to_string(Arm.get_position()));
-		// pros::lcd::set_text(2, "Front Right Motor:" + std::to_string(FrontRight.get_position()));
-		// pros::lcd::set_text(3, "Back Left Motor:" + std::to_string(BackLeft.get_position()));
-		// pros::lcd::set_text(4, "Back Right Motor:" + std::to_string(BackRight.get_position()));
-		// pros::lcd::set_text(5, "Rotation Sensor: " + std::to_string(RotationSensor.get_position()));
-		// pros::lcd::set_text(6, "Catapult: " + std::to_string(Catapult.get_position()));
-
-
-		// driving control code
 
 		xMotion = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X); // ik this looks wrong, but it works
 		yMotion = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -388,19 +365,13 @@ void opcontrol()
 		BackRight.move(-right);
 		FrontRight.move(-right);
 		MidLeft.move(left);
-		MidRight.move(right);
-
-		pros::lcd::set_text(1, std::to_string(right));
-		pros::lcd::set_text(2, std::to_string(left));
+		MidRight.move(-right);
 
 
-
-
-		if (master.get_digital(DIGITAL_R1))
+		if (master.get_digital(DIGITAL_R1)) // Catapult Set and Launch
 		{
 			RotationSensor.set_data_rate(0);
 			Catapult.move_velocity(200);
-			pros::lcd::set_text(5, std::to_string(RotationSensor.get_angle()));
 		}
 		else if (RotationSensor.get_angle() <= 33998)
 		{ // 3050 ->2700(no data rate)-> 3565 (data rate)
@@ -413,7 +384,8 @@ void opcontrol()
 			Catapult.move_velocity(0);
 		}
 
-		if (master.get_digital(DIGITAL_L1))
+
+		if (master.get_digital(DIGITAL_L1)) // Intake Arm
 		{
 			Arm.move_velocity(-112);
 			pros::lcd::set_text(5, "Arm Velocity:" + std::to_string(Arm.get_actual_velocity()));
@@ -428,35 +400,26 @@ void opcontrol()
 			Arm.move_velocity(0);
 		}
 
-		if (master.get_digital(DIGITAL_R2))
+
+		if (master.get_digital(DIGITAL_UP)) // Intake Rotation
 		{
 			Intake.move_velocity(-200);
-			pros::lcd::set_text(5, "Intake Velocity:" + std::to_string(Intake.get_actual_velocity()));
 		}
 		else if (master.get_digital(DIGITAL_DOWN))
 		{
 			Intake.move_velocity(200);
-			pros::lcd::set_text(5, "Intake Velocity:" + std::to_string(Intake.get_actual_velocity()));
 		}
-
-		/* 		if(master.get_digital(DIGITAL_DOWN))
-				{
-					Intake.move_velocity(200);
-					pros::lcd::set_text(5,"Intake Velocity:" + std::to_string(Intake.get_actual_velocity()));
-				}
-				else {
-					Intake.move_velocity(0);
-				} */
-
-		if (master.get_digital(DIGITAL_A))
+		else if (master.get_digital(DIGITAL_LEFT))
 		{
-			Piston.set_value(false);
-		}
-		else
-		{
-			Piston.set_value(true);
+			Intake.move_velocity(0);
 		}
 
-		pros::delay(20);
+
+		if (master.get_digital(DIGITAL_A)) // Wing Piston
+		{
+			pistonOpen = !pistonOpen;
+			Piston.set_value(pistonOpen);
+			pros::delay(300);
+		}
 	}
 }
