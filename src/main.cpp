@@ -99,14 +99,15 @@ void competition_initialize() {}
 // This is PID 
 // !Don't Touch it
 	std::shared_ptr<ChassisController> bot = ChassisControllerBuilder()
-	 .withMotors(18, -20, -9, 14) // front right and back right were reversed in order to go forward
+	 .withMotors(13, -16, 11, -14) // front right and back right were reversed in order to go forward
 	 // change P then D first then I only if necessary
 	 // start with P I and D with zero
+	 
 	 .withGains( // 0.7, 0, 0.1 results: faster, shaking less violently 0
 		 // 0.5 =
-		 {0.001, 0, 0},	  // Distance controller gains
+		 {0.0002, 0.001, 0},	  // Distance controller gains
 		 {0.001, 0, 0},	  // turn controller gains
-		 {0.0, 0, 0.0000} // Angle controller (helps bot drive straight)
+		 {0.001, 0, 0.0000} // Angle controller (helps bot drive straight)
 		 )
 	 .withMaxVelocity(200)
 	 // Green gearset, 3 inch wheel diam, 9 inch wheel track
@@ -301,11 +302,13 @@ void autonomous()
 	pros::lcd::set_text(1, "THIS IS AUTON!");
 
 	// ! Call the redAuton function when needed
-	redAuton();
+	// redAuton();
 
 	// ! Call the blueAuton function when needed
 	// TODO: Code the blueAuton function
 	// blueAuton();
+
+	bot->moveDistance(2_ft);
 }
 
 /**
@@ -367,22 +370,28 @@ void opcontrol()
 		MidLeft.move(yMotion);
 		MidRight.move(yMotion);
 
+		pros::lcd::set_text(2, "Rotation " + std::to_string(RotationSensor.get_position()));
 
-		pros::lcd::set_text(3, "Catapult Velocity:" + std::to_string(Catapult.get_actual_velocity()));
 		if (master.get_digital(DIGITAL_L1)) // Catapult Set and Launch
 		{
 			RotationSensor.set_data_rate(0);
 			Catapult.move_velocity(200);
+			pros::lcd::set_text(3, "Catapult press:" + std::to_string(Catapult.get_actual_velocity()));
+
 		}
 		else if (RotationSensor.get_angle() <= 33998)
 		{ // 3050 ->2700(no data rate)-> 3565 (data rate)
 			Catapult.move_velocity(200);
+			pros::lcd::set_text(4, "Catapult :" + std::to_string(Catapult.get_actual_velocity()));
+
 		}
 		// value to launch (34000) is value due to catapult starting position not being zero
 		else
 		{
 			// RotationSensor.set_data_rate(55);
 			Catapult.move_velocity(0);
+			pros::lcd::set_text(5, "Catapult else:" + std::to_string(Catapult.get_actual_velocity()));
+
 		}
 
 
