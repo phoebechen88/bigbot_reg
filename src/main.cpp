@@ -99,7 +99,7 @@ void competition_initialize() {}
 // This is PID 
 // !Don't Touch it
 	std::shared_ptr<ChassisController> bot = ChassisControllerBuilder()
-	 .withMotors(13, -16, 11, -14) // front right and back right were reversed in order to go forward
+	 .withMotors(13, -16, -14, 11) // front right and back right were reversed in order to go forward
 	 // change P then D first then I only if necessary
 	 // start with P I and D with zero
 	 
@@ -145,7 +145,7 @@ void getBall(){
 	Intake.move_velocity(-200); // The intake starts
 	Arm.move_absolute(700, 200); // The Arm for intake goes down
 	pros::delay(500); // Wait for the arm to go down
-	for (int i = 0; i >= -1500; i = i - 500) // Slowly (exponentially) move the arm up
+	for (int i = 0; i >= -1500; i = i - 450) // Slowly (exponentially) move the arm up
 	{
 		Intake.move_velocity(-100);
 		Arm.move_absolute(i, 200);
@@ -214,35 +214,41 @@ void redAuton() {
 	// * Part 1 - Set the Catapult, move forward, turn to the left
 	setCatapult();
 	bot->moveDistance(24_in);
-	negativeTurn(50);
+	negativeTurn(180); // Reverse direction
+	Catapult.move_velocity(200); // Shoot preload
+	pros::delay(500); // Wait for launch
+	positiveTurn(100); // Turn back
+	// negativeTurn(60);
 
 	// * Part 2 - Move forward, Get the ball and turn to the left for launching
-	bot->moveDistance(19_in);
+	bot->moveDistance(15.5_in);
 	getBall();
-	negativeTurn(95);
+	negativeTurn(92);
 
 	// * Part 3 - Launch the ball, have a delay and turn to the right to get another ball
 	Catapult.move_velocity(200); // The catapult goes down
 	pros::delay(500); // Wait for launch
-	positiveTurn(85);
+	positiveTurn(80);
 
 	// * Part 4 - Move forward, get the ball and turn to the left for launching
-	bot->moveDistance(10_in);
+	bot->moveDistance(12_in);
 	getBall();
 	pros::delay(500); // Wait for launch
-	negativeTurn(80);
+	negativeTurn(75);
 
 	// * Part 5 - Launch the ball, have a delay and turn to the right to get another ball
-	Catapult.move_velocity(300); // The catapult goes down
+	Catapult.move_velocity(200); // The catapult goes down
 	pros::delay(500); // Wait for launch
 	Catapult.move_velocity(0); // The catapult stops
 
 	// * Part 6 - Move backwards, have a delay and move foward for THE SLAPP TO THE BALL
-	positiveTurn(80);
+	bot->moveDistance(-8_in);
+	positiveTurn(97);
 	pros::delay(100);
-	bot->moveDistance(-52_in);
+	bot->moveDistance(-45_in);
 
-	negativeTurn(50);
+	negativeTurn(55);
+	bot->moveDistance(5_in);
 
 
 	pros::delay(1000); // Wait for launch
@@ -307,9 +313,6 @@ void autonomous()
 	// ! Call the blueAuton function when needed
 	// TODO: Code the blueAuton function
 	//blueAuton();
-	
- 
-	// bot->moveDistance(2_ft);
 
 }
 
