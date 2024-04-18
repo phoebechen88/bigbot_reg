@@ -213,7 +213,7 @@ void redAuton() {
 
 	// * Part 1 - Set the Catapult, move forward
 	setCatapult();
-	bot->moveDistance(35_in);
+	bot->moveDistance(36_in);
 
 	// * Part 2 - Move forward, Get the ball and turn to the left for launching
 	getBall();
@@ -236,9 +236,10 @@ void redAuton() {
 
 	// * Part 6 - prep THE SLAPP TO THE BALL
 	bot->moveDistance(-8_in); // Move forward to adjust angle
-	positiveTurn(105); // Turn towards MLZ
-	bot->moveDistance(-45_in); // Drive to MLZ
-	negativeTurn(40); // Align angle with MLZ
+	positiveTurn(102); // Turn towards MLZ
+	bot->moveDistance(-41_in); // Drive to MLZ
+	negativeTurn(54); // Align angle with MLZ
+	bot->moveDistance(-6_in);
 
 	// * Part 7 - Slap
 	pros::delay(1000); // temp delay -> substitute with slapping code
@@ -253,45 +254,6 @@ void redAuton() {
 	// insert code about moving intake here
 
 	// pros::delay(1000); // Wait for launch
-	pros::lcd::set_text(5, std::to_string('The Program ends'));
-}
-void blueAuton() {
-
-	// * Part 1 - Set the Catapult, move forward, turn to the left
-	setCatapult();
-	bot->moveDistance(24_in);
-	positiveTurn(50);
-
-	// * Part 2 - Move forward, Get the ball and turn to the left for launching
-	bot->moveDistance(19_in);
-	getBall();
-	positiveTurn(95);
-
-	// * Part 3 - Launch the ball, have a delay and turn to the right to get another ball
-	Catapult.move_velocity(200); // The catapult goes down
-	pros::delay(500); // Wait for launch
-	negativeTurn(85);
-
-	// * Part 4 - Move forward, get the ball and turn to the left for launching
-	bot->moveDistance(10_in);
-	getBall();
-	pros::delay(500); // Wait for launch
-	positiveTurn(80);
-
-	// * Part 5 - Launch the ball, have a delay and turn to the right to get another ball
-	Catapult.move_velocity(300); // The catapult goes down
-	pros::delay(500); // Wait for launch
-	Catapult.move_velocity(0); // The catapult stops
-
-	// * Part 6 - Move backwards, have a delay and move foward for THE SLAPP TO THE BALL
-	negativeTurn(80);
-	pros::delay(100);
-	bot->moveDistance(-52_in);
-
-	positiveTurn(50);
-
-
-	pros::delay(1000); // Wait for launch
 	pros::lcd::set_text(5, std::to_string('The Program ends'));
 }
 
