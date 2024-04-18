@@ -246,7 +246,7 @@ void redAuton() {
 	// * Part 8 - Push Triballs thru
 	negativeTurn(45); // turn once towards alley
 	bot->moveDistance(-18_in);
-	// negativeTurn(40); // turn again towarrds alley
+	// negativeTurn(40); // turn again towards alley
 	// bot->moveDistance(45_in);
 
 	// * Part 9 - Touch elevation bar
