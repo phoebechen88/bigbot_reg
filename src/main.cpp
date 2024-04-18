@@ -144,7 +144,7 @@ void getBall(){
 	setCatapult(); // Set the catapult
 	Intake.move_velocity(-200); // The intake starts
 	Arm.move_absolute(700, 200); // The Arm for intake goes down
-	pros::delay(500); // Wait for the arm to go down
+	pros::delay(300); // Wait for the arm to go down
 	for (int i = 0; i >= -1500; i = i - 450) // Slowly (exponentially) move the arm up
 	{
 		Intake.move_velocity(-100);
@@ -211,43 +211,45 @@ void positiveTurn(int degrees)
 
 void redAuton() {
 
-	// * Part 1 - Set the Catapult, move forward, turn to the left
+	// * Part 1 - Set the Catapult, move forward
 	setCatapult();
-	bot->moveDistance(33_in);
-	// negativeTurn(60);
+	bot->moveDistance(35_in);
 
 	// * Part 2 - Move forward, Get the ball and turn to the left for launching
-	bot->moveDistance(15.5_in);
 	getBall();
-	negativeTurn(92);
+	negativeTurn(94);
 
 	// * Part 3 - Launch the ball, have a delay and turn to the right to get another ball
 	Catapult.move_velocity(200); // The catapult goes down
 	pros::delay(500); // Wait for launch
-	positiveTurn(80);
+	positiveTurn(84);
 
 	// * Part 4 - Move forward, get the ball and turn to the left for launching
-	bot->moveDistance(12_in);
+	bot->moveDistance(13_in);
 	getBall();
-	pros::delay(500); // Wait for launch
-	negativeTurn(75);
+	negativeTurn(76);
 
 	// * Part 5 - Launch the ball, have a delay and turn to the right to get another ball
 	Catapult.move_velocity(200); // The catapult goes down
 	pros::delay(500); // Wait for launch
 	Catapult.move_velocity(0); // The catapult stops
 
-	// * Part 6 - Move backwards, have a delay and move foward for THE SLAPP TO THE BALL
-	bot->moveDistance(-8_in);
-	positiveTurn(97);
-	pros::delay(100);
-	bot->moveDistance(-45_in);
+	// * Part 6 - prep THE SLAPP TO THE BALL
+	bot->moveDistance(-8_in); // Move forward to adjust angle
+	positiveTurn(105); // Turn towards MLZ
+	bot->moveDistance(-45_in); // Drive to MLZ
+	negativeTurn(40); // Align angle with MLZ
 
-	negativeTurn(55);
-	bot->moveDistance(5_in);
+	// * Part 7 - Slap
+	pros::delay(1000); // temp delay -> substitute with slapping code
 
+	// * Part 8 - Push Triballs thru
+	negativeTurn(45); // turn once towards alley
+	bot->moveDistance(-18_in);
+	// negativeTurn(40); // turn again towarrds alley
+	// bot->moveDistance(45_in);
 
-	pros::delay(1000); // Wait for launch
+	// pros::delay(1000); // Wait for launch
 	pros::lcd::set_text(5, std::to_string('The Program ends'));
 }
 void blueAuton() {
