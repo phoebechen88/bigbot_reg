@@ -213,11 +213,7 @@ void redAuton() {
 
 	// * Part 1 - Set the Catapult, move forward, turn to the left
 	setCatapult();
-	bot->moveDistance(24_in);
-	negativeTurn(180); // Reverse direction
-	Catapult.move_velocity(200); // Shoot preload
-	pros::delay(500); // Wait for launch
-	positiveTurn(100); // Turn back
+	bot->moveDistance(33_in);
 	// negativeTurn(60);
 
 	// * Part 2 - Move forward, Get the ball and turn to the left for launching
