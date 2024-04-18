@@ -270,6 +270,11 @@ void autonomous()
 
 	pros::lcd::set_text(1, "THIS IS AUTON!");
 
+// BIG BOT SET UP:
+// Bring Back Left Motor's visible corner to centerpointt of 2nd nub out.
+// Bring Right Back corner to wall
+// Check alignment with 1st Triball (move back left corner back)
+
 	// ! Call the redAuton function when needed
 	redAuton();
 
