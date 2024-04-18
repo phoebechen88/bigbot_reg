@@ -249,6 +249,9 @@ void redAuton() {
 	// negativeTurn(40); // turn again towarrds alley
 	// bot->moveDistance(45_in);
 
+	// * Part 9 - Touch elevation bar
+	// insert code about moving intake here
+
 	// pros::delay(1000); // Wait for launch
 	pros::lcd::set_text(5, std::to_string('The Program ends'));
 }
