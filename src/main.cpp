@@ -144,7 +144,7 @@ void getBall(){
 	setCatapult(); // Set the catapult
 	Intake.move_velocity(-200); // The intake starts
 	Arm.move_absolute(700, 200); // The Arm for intake goes down
-	pros::delay(300); // Wait for the arm to go down
+	pros::delay(400); // Wait for the arm to go down
 	for (int i = 0; i >= -1500; i = i - 450) // Slowly (exponentially) move the arm up
 	{
 		Intake.move_velocity(-100);
