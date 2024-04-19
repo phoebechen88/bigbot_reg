@@ -105,7 +105,7 @@ void competition_initialize() {}
 	 
 	 .withGains( // 0.7, 0, 0.1 results: faster, shaking less violently 0
 		 // 0.5 =
-		 {0.0006, 0.0000017, 0},	  // Distance controller gains
+		 {0.0006, 0.0000017, 0.000001},	  // Distance controller gains
 		 {0.001, 0, 0},	  // turn controller gains
 		 {0.001, 0, 0.0000} // Angle controller (helps bot drive straight)
 		 )
@@ -242,7 +242,15 @@ void redAuton() {
 	bot->moveDistance(-6_in);
 
 	// * Part 7 - Slap
-	pros::delay(1000); // temp delay -> substitute with slapping code
+	Piston.set_value(false); // Open wings
+	bot->setMaxVelocity(300);
+	for(int i=0; i< 7; i++) // Slap 7x
+	{
+       bot->moveDistance(-5_in);
+	   bot->moveDistance(5_in);
+	}
+	Piston.set_value(true); // Close wings
+	bot->setMaxVelocity(200);
 
 	// * Part 8 - Push Triballs thru
 	negativeTurn(45); // turn once towards alley
@@ -267,6 +275,7 @@ void slapBall(){
 void autonomous()
 {
 	pros::Rotation RotationSensor(19);
+	Piston.set_value(true); // Start wings closed
 
 	pros::lcd::set_text(1, "THIS IS AUTON!");
 
@@ -275,12 +284,17 @@ void autonomous()
 // Bring Right Back corner to wall
 // Check alignment with 1st Triball (move back left corner back)
 
+	Piston.set_value(false); // Open wings
+	bot->setMaxVelocity(300);
+	for(int i=0; i< 7; i++) // Slap twice
+	{
+       bot->moveDistance(-6_in);
+	   bot->moveDistance(6_in);
+	}
+	Piston.set_value(true); // Close wings
+	
 	// ! Call the redAuton function when needed
-	redAuton();
-
-	// ! Call the blueAuton function when needed
-	// TODO: Code the blueAuton function
-	//blueAuton();
+	// redAuton();
 
 }
 
@@ -324,6 +338,7 @@ void opcontrol()
 	Arm.tare_position();
 
 	bool pistonOpen = true;
+	Piston.set_value(pistonOpen); // keep wings closed
 
 	//-33 Arm encoder units for intake
 
