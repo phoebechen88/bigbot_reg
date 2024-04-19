@@ -7,12 +7,12 @@
 #include "okapi/api.hpp"
 #include "okapi/api/chassis/controller/chassisControllerPid.hpp"
 using namespace okapi;
-pros::Motor Catapult(17, false);
-pros::Motor Arm(20, false);
-pros::Motor Intake(18, false);
-pros::Rotation RotationSensor(19);
+pros::Motor Catapult(12, false);
+pros::Motor Arm(19, false);
+pros::Motor Intake(2, false);
+pros::Rotation RotationSensor(16);
 pros::ADIDigitalOut Piston('A');
-pros::Imu imu_sensor(10);
+pros::Imu imu_sensor(1);
 
 /**
  * A callback function for LLEMU's center button.
@@ -98,26 +98,26 @@ void competition_initialize() {}
 
 // This is PID 
 // !Don't Touch it
-	std::shared_ptr<ChassisController> bot = ChassisControllerBuilder()
-	 .withMotors(13, -16, -14, 11) // front right and back right were reversed in order to go forward
-	 // change P then D first then I only if necessary
-	 // start with P I and D with zero
-	 
-	 .withGains( // 0.7, 0, 0.1 results: faster, shaking less violently 0
-		 // 0.5 =
-		 {0.0006, 0.0000017, 0.000001},	  // Distance controller gains
-		 {0.001, 0, 0},	  // turn controller gains
-		 {0.001, 0, 0.0000} // Angle controller (helps bot drive straight)
-		 )
-	 .withMaxVelocity(200)
-	 // Green gearset, 3 inch wheel diam, 9 inch wheel track
-	 .withDimensions(AbstractMotor::gearset::green, {{4_in, 14.8_in}, imev5GreenTPR})
-	 .build();
+std::shared_ptr<ChassisController> bot = ChassisControllerBuilder()
+	.withMotors(17, -18, -13, 11) // front right and back right were reversed in order to go forward
+	// change P then D first then I only if necessary
+	// start with P I and D with zero
+	
+	.withGains( // 0.7, 0, 0.1 results: faster, shaking less violently 0
+		// 0.5 =
+		{0.0006, 0.0000017, 0.000001},	  // Distance controller gains
+		{0.001, 0, 0},	  // turn controller gains
+		{0.001, 0, 0.0000} // Angle controller (helps bot drive straight)
+		)
+	.withMaxVelocity(200)
+	// Green gearset, 3 inch wheel diam, 9 inch wheel track
+	.withDimensions(AbstractMotor::gearset::green, {{4_in, 14.8_in}, imev5GreenTPR})
+	.build();
 
 // This set the Catapult's Position
 void setCatapult(){
 	// Set the Rotation Sensor
-	pros::Rotation RotationSensor(19);
+	pros::Rotation RotationSensor(16);
 
 	// * Run until the Catault is at the desired position which is Down
 	while (true)
@@ -209,7 +209,7 @@ void positiveTurn(int degrees)
 	}
 }
 
-void redAuton() {
+void Auton() {
 
 	// * Part 1 - Set the Catapult, move forward
 	setCatapult();
@@ -274,16 +274,20 @@ void slapBall(){
 
 void autonomous()
 {
-	pros::Rotation RotationSensor(19);
+	// BIG BOT SET UP:
+	// Bring Back Left Motor's visible corner to centerpointt of 2nd nub out.
+	// Bring Right Back corner to wall
+	// Check alignment with 1st Triball (move back left corner back)
+
+
+	pros::Rotation RotationSensor(16);
 	Piston.set_value(true); // Start wings closed
+
 
 	pros::lcd::set_text(1, "THIS IS AUTON!");
 
-// BIG BOT SET UP:
-// Bring Back Left Motor's visible corner to centerpointt of 2nd nub out.
-// Bring Right Back corner to wall
-// Check alignment with 1st Triball (move back left corner back)
 
+// temp
 	Piston.set_value(false); // Open wings
 	bot->setMaxVelocity(300);
 	for(int i=0; i< 7; i++) // Slap twice
@@ -293,8 +297,9 @@ void autonomous()
 	}
 	Piston.set_value(true); // Close wings
 	
+
 	// ! Call the redAuton function when needed
-	// redAuton();
+	// Auton();
 
 }
 
@@ -314,18 +319,18 @@ void autonomous()
 void opcontrol()
 {
 
-	pros::Motor FrontLeft(13, false);
-	pros::Motor FrontRight(16, true);
+	pros::Motor FrontLeft(17, false);
+	pros::Motor FrontRight(18, true);
 	pros::Motor BackLeft(11, false);
-	pros::Motor BackRight(14, true);
-	pros::Motor MidRight(15, true);
-	pros::Motor MidLeft(12, false);
-	pros::Motor Catapult(17, false);
-	pros::Motor Arm(20, false);
-	pros::Motor Intake(18, false);
-	pros::Rotation RotationSensor(19);
+	pros::Motor BackRight(13, true);
+	pros::Motor MidRight(20, true);
+	pros::Motor MidLeft(15, false);
+	pros::Motor Catapult(12, false);
+	pros::Motor Arm(19, false);
+	pros::Motor Intake(2, false);
+	pros::Rotation RotationSensor(16);
 	pros::ADIDigitalOut Piston('A');
-	pros::Imu imu_sensor(10);
+	pros::Imu imu_sensor(1);
 	
 	// imu_sensor.reset();
 
@@ -358,7 +363,6 @@ void opcontrol()
 		MidLeft.move(yMotion);
 		MidRight.move(yMotion);
 
-		pros::lcd::set_text(2, "Rotation " + std::to_string(RotationSensor.get_position()));
 
 		if (master.get_digital(DIGITAL_L1)) // Catapult Set and Launch
 		{
