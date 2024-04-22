@@ -10,7 +10,7 @@ using namespace okapi;
 pros::Motor Catapult(12, false);
 pros::Motor Arm(19, false);
 pros::Motor Intake(2, false);
-pros::Rotation RotationSensor(16);
+pros::Rotation RotationSensor(14);
 pros::ADIDigitalOut Piston('A');
 pros::Imu imu_sensor(1);
 
@@ -117,7 +117,7 @@ std::shared_ptr<ChassisController> bot = ChassisControllerBuilder()
 // This set the Catapult's Position
 void setCatapult(){
 	// Set the Rotation Sensor
-	pros::Rotation RotationSensor(16);
+	pros::Rotation RotationSensor(14);
 
 	// * Run until the Catault is at the desired position which is Down
 	while (true)
@@ -143,8 +143,10 @@ void setCatapult(){
 void getBall(){
 	setCatapult(); // Set the catapult
 	Intake.move_velocity(-200); // The intake starts
-	Arm.move_absolute(700, 200); // The Arm for intake goes down
-	pros::delay(400); // Wait for the arm to go down
+	Arm.move_absolute(1000, 200); // The Arm for intake goes down
+	pros::delay(400);
+	// Intake.move_velocity(-200); // The intake starts
+	// Arm.move_absolute(900, 200); // The Arm for intake goes down
 	for (int i = 0; i >= -1500; i = i - 450) // Slowly (exponentially) move the arm up
 	{
 		Intake.move_velocity(-100);
@@ -209,11 +211,11 @@ void positiveTurn(int degrees)
 	}
 }
 
-void Auton() {
+void redAuton() {
 
 	// * Part 1 - Set the Catapult, move forward
 	setCatapult();
-	bot->moveDistance(36_in);
+	bot->moveDistance(35.75_in);
 
 	// * Part 2 - Move forward, Get the ball and turn to the left for launching
 	getBall();
@@ -222,12 +224,21 @@ void Auton() {
 	// * Part 3 - Launch the ball, have a delay and turn to the right to get another ball
 	Catapult.move_velocity(200); // The catapult goes down
 	pros::delay(500); // Wait for launch
-	positiveTurn(84);
+	positiveTurn(87);
 
 	// * Part 4 - Move forward, get the ball and turn to the left for launching
-	bot->moveDistance(13_in);
-	getBall();
-	negativeTurn(76);
+	bot->moveDistance(12.75_in);
+	setCatapult(); // Set the catapult
+	Intake.move_velocity(-200); // The intake starts
+	Arm.move_absolute(1000, 200); // The Arm for intake goes down
+	pros::delay(500);
+	for (int i = 0; i >= -1500; i = i - 450) // Slowly (exponentially) move the arm up
+	{
+		Intake.move_velocity(-100);
+		Arm.move_absolute(i, 200);
+		pros::delay(250);
+	}
+	negativeTurn(77);
 
 	// * Part 5 - Launch the ball, have a delay and turn to the right to get another ball
 	Catapult.move_velocity(200); // The catapult goes down
@@ -236,30 +247,34 @@ void Auton() {
 
 	// * Part 6 - prep THE SLAPP TO THE BALL
 	bot->moveDistance(-8_in); // Move forward to adjust angle
-	positiveTurn(102); // Turn towards MLZ
-	bot->moveDistance(-41_in); // Drive to MLZ
-	negativeTurn(54); // Align angle with MLZ
-	bot->moveDistance(-6_in);
+	positiveTurn(100); // Turn towards MLZ ****
+	bot->moveDistance(-47.25_in); // Drive to MLZ
+	negativeTurn(91); // Align angle with MLZ
+	bot->moveDistance(9_in);
+	positiveTurn(17);
+	// bot->moveDistance(-5_in);
 
 	// * Part 7 - Slap
-	Piston.set_value(false); // Open wings
+	Piston.set_value(true); // Open wings
 	bot->setMaxVelocity(300);
-	for(int i=0; i< 7; i++) // Slap 7x
+	for(int i=0; i< 8; i++) // Slap 4x
 	{
-       bot->moveDistance(-5_in);
-	   bot->moveDistance(5_in);
+       bot->moveDistance(-9_in);
+	   bot->moveDistance(9_in);
 	}
-	Piston.set_value(true); // Close wings
+	Piston.set_value(false); // Close wings
 	bot->setMaxVelocity(200);
 
 	// * Part 8 - Push Triballs thru
-	negativeTurn(45); // turn once towards alley
-	bot->moveDistance(-18_in);
-	// negativeTurn(40); // turn again towards alley
-	// bot->moveDistance(45_in);
+	negativeTurn(30); // turn once towards alley
+	bot->moveDistance(-8_in);
+	negativeTurn(70); // turn again towards alley
+	bot->moveDistance(45_in);
 
 	// * Part 9 - Touch elevation bar
 	// insert code about moving intake here
+	Piston.set_value(true); // Open wings to touch bar
+	bot->moveDistance(1.5_in);
 
 	// pros::delay(1000); // Wait for launch
 	pros::lcd::set_text(5, std::to_string('The Program ends'));
@@ -280,26 +295,15 @@ void autonomous()
 	// Check alignment with 1st Triball (move back left corner back)
 
 
-	pros::Rotation RotationSensor(16);
-	Piston.set_value(true); // Start wings closed
+	pros::Rotation RotationSensor(14);
+	Piston.set_value(false); // Start wings closed
 
 
 	pros::lcd::set_text(1, "THIS IS AUTON!");
-
-
-// temp
-	Piston.set_value(false); // Open wings
-	bot->setMaxVelocity(300);
-	for(int i=0; i< 7; i++) // Slap twice
-	{
-       bot->moveDistance(-6_in);
-	   bot->moveDistance(6_in);
-	}
-	Piston.set_value(true); // Close wings
 	
 
 	// ! Call the redAuton function when needed
-	// Auton();
+	redAuton();
 
 }
 
@@ -328,13 +332,14 @@ void opcontrol()
 	pros::Motor Catapult(12, false);
 	pros::Motor Arm(19, false);
 	pros::Motor Intake(2, false);
-	pros::Rotation RotationSensor(16);
+	pros::Rotation RotationSensor(14);
 	pros::ADIDigitalOut Piston('A');
 	pros::Imu imu_sensor(1);
 	
 	// imu_sensor.reset();
 
 	pros::lcd::set_text(1, "READY TO DRIVE");
+	
 	int xMotion;
 	int yMotion;
 
@@ -342,7 +347,7 @@ void opcontrol()
 	Catapult.tare_position();
 	Arm.tare_position();
 
-	bool pistonOpen = true;
+	bool pistonOpen = false;
 	Piston.set_value(pistonOpen); // keep wings closed
 
 	//-33 Arm encoder units for intake
@@ -368,22 +373,18 @@ void opcontrol()
 		{
 			RotationSensor.set_data_rate(0);
 			Catapult.move_velocity(200);
-			pros::lcd::set_text(3, "Catapult press:" + std::to_string(Catapult.get_actual_velocity()));
+			pros::lcd::set_text(1, std::to_string(Catapult.get_position()));
 
 		}
 		else if (RotationSensor.get_angle() <= 33998)
 		{ // 3050 ->2700(no data rate)-> 3565 (data rate)
 			Catapult.move_velocity(200);
-			pros::lcd::set_text(4, "Catapult :" + std::to_string(Catapult.get_actual_velocity()));
-
 		}
 		// value to launch (34000) is value due to catapult starting position not being zero
 		else
 		{
 			// RotationSensor.set_data_rate(55);
 			Catapult.move_velocity(0);
-			pros::lcd::set_text(5, "Catapult else:" + std::to_string(Catapult.get_actual_velocity()));
-
 		}
 
 
@@ -415,11 +416,13 @@ void opcontrol()
 		}
 
 
-		if (master.get_digital(DIGITAL_LEFT)) // Wing Piston
+		if (master.get_digital(DIGITAL_Y)) // Wing Piston
 		{
+
 			pistonOpen = !pistonOpen;
 			Piston.set_value(pistonOpen);
 			pros::delay(300);
+
 		}
 	}
 }
